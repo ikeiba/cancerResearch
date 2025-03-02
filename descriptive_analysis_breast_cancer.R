@@ -2,12 +2,26 @@
 # Authors: Iker Ibarrola, Enetz Quindimil, Carlos Firvida, Iñigo Infante
 
 # Description of the dataset:
+# The breast cancer dataset is originally from a different repository (UCI Machine Learning Repository), 
+# where it describes real cell samples from multiple breast cancer patients.
 
+# The following variables were recorded:
+#   * number of times pregnant
+#   * plasma glucose concentration at 2 hours in an oral glucose tolerance test
+#   * diastoling blood pressure (mmHg)
+#   * triceps skin fold thickness (mm)
+#   * 2-hour serum insulin (mu U/ml)
+#   * body mass index (weight in kg/height in m^2)
+#   * diabetes pedigree function ~ probability of diabetes based on family history
+#   * age (years)
+#   * test whether the patient showed signs of diabetes (coded zero if negative, one if positive)
 
 # First of all, we load the libraries we are going to use to perform the analysis
 library(dplyr)
 library(pastecs)
-
+library(ggplot2)
+library(lattice)
+library(car)
 
 ###################################
 # START
@@ -137,22 +151,71 @@ cor(data$radius_mean, data$perimeter_mean) # Very strong correlation (over 0.99,
 cor(data$radius_mean, data$area_mean) # Very strong correlation (over 0.98, near perfect correlation)
 cor(data$perimeter_mean, data$area_mean) # Very strong correlation (over 0.98, near perfect correlation)
 
+###################################
+# Visualization
+# To begin with the visualization, we will create the multiscatter plot for the variables computing 
+# the mean, the se and worst:
+data_means <- data[,2:11]
+numeric_df_means <- data_means[, sapply(data_means, is.numeric)]
+pairs(numeric_df_means) # for the means
+
+data_se <- data[,12:21]
+numeric_df_se <- data_se[, sapply(data_se, is.numeric)]
+pairs(numeric_df_se) # for the standard error
+
+data_worst <- data[,22:31]
+numeric_df_worst <- data_worst[, sapply(data_worst, is.numeric)]
+pairs(numeric_df_worst) # for the standard error
+
+# We continue by creating a histogram of radius_mean (in case you wanted to visualize
+# another variable just change x = variable)
+ggplot(data, aes(x = radius_mean)) + 
+  geom_histogram(binwidth = 0.5, fill = "blue") + 
+  ggtitle("Histogram of Radius Mean") + 
+  xlab("Radius Mean") + 
+  ylab("Count")
+
+# Now a boxplot of radius_mean (in case you wanted to visualize another variable just change x = variable)
+# we use the diagnosis in the x axis to see difference between belign and malign tumors
+ggplot(data, aes(x = diagnosis , y = radius_mean, fill = diagnosis)) + 
+  geom_boxplot() + 
+  ggtitle("Comparison of Radius Mean for Benign vs Malignant Tumors") # We can detect some outliers by using it
+
+# To confirm them we use the dotplot
+dotplot(data$radius_mean ~ data$diagnosis)
 
 
+# We use some other charts such as the violin plot for concavity_mean
+ggplot(data, aes(x = diagnosis, y = concavity_mean, fill = diagnosis)) + 
+  geom_violin() + 
+  ggtitle("Distribution of Concavity Mean by Diagnosis")
+
+# Scatter plot of radius_mean vs perimeter_mean
+ggplot(data, aes(x = radius_mean, y = concavity_mean, color = diagnosis)) + 
+  geom_point() + 
+  ggtitle("Scatter Plot of Radius Mean vs Perimeter Mean")
+#Another way of visualizing the same as above
+ggplot(data, aes(x=radius_mean, y=concavity_mean)) + geom_point(size=1) + facet_grid(.~diagnosis)
+
+# Scatter plot of smoothness_mean vs compactness_mean
+ggplot(data, aes(x = smoothness_mean, y = compactness_mean, color = diagnosis)) + 
+  geom_point() + 
+  ggtitle("Scatter Plot of Radius Mean vs Perimeter Mean")
+#Another way of visualizing the same as above
+ggplot(data, aes(x=smoothness_mean, y=compactness_mean)) + geom_point(size=1) + facet_grid(.~diagnosis)
 
 
+# We continue by using the contingency table to check some information about benign and malign tumors
+table(data$diagnosis)
 
+# We look at the proportion of benign vs malignant cases
+prop.table(table(data$diagnosis))
 
+# We use a bar plot to visualize this
+ggplot(data)+
+  aes(diagnosis)+
+  geom_bar()
 
-
-
-
-
-
-data_new <- data[,1:10]
-numeric_df <- data_new[, sapply(data_new, is.numeric)]
-# Create multiscatter plot
-pairs(numeric_df)
-
-
+# We end up by using the qq plot
+qqPlot(data$radius_mean) # as there are a lot of points outside the region,the normal approximation does not work
 
