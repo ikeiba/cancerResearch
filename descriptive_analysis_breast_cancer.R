@@ -81,9 +81,9 @@ lapply(subset_to_analyse, mean) # Modify the second parameter for whatever funct
 # Correlation
 # In this step we will do a deeper analysis of our variables: we already knew that there were "just" 10 different metrics
 # (radius, texture, perimeter, area, smoothness, compactness, concavity, concave points, symmetry and fractal dimension),
-# each computed in three different ways (mean, se (standard error) and worst). Now, we will check if there is any
-# correlation between each metric's mean and se
+# each computed in three different ways (mean, se (standard error) and worst). 
 
+# Now, we will check if there is any correlation between each metric's mean and se.
 cor(data$radius_mean, data$radius_se)
 cor(data$texture_mean, data$texture_se)
 cor(data$perimeter_mean, data$perimeter_se)
@@ -94,11 +94,65 @@ cor(data$concavity_mean, data$concavity_se)
 cor(data$concave.points_mean, data$concave.points_se)
 cor(data$symmetry_mean, data$symmetry_se)
 cor(data$fractal_dimension_mean, data$fractal_dimension_se)
+# In most cases the correlation has been between 0.6 and 0.7 (a positive correlation but not very strong)
+# In other cases such as the smoothness, texture symmetry the correlation has been weaker (around 0.3-0.4)
+# Finally, in the case of area the correlation has been strong (0.8)
 
-
-
+# We are going to check the correlation between each metric's mean and worst (in this case we can already suspect that 
+#the correlation is going to be strong, as higher means should have a higher worst value)
 cor(data$radius_mean, data$radius_worst)
 cor(data$texture_mean, data$texture_worst)
+cor(data$perimeter_mean, data$perimeter_worst)
+cor(data$area_mean, data$area_worst)
+cor(data$smoothness_mean, data$smoothness_worst)
+cor(data$compactness_mean, data$compactness_worst)
+cor(data$concavity_mean, data$concavity_worst)
+cor(data$concave.points_mean, data$concave.points_worst)
+cor(data$symmetry_mean, data$symmetry_worst)
+cor(data$fractal_dimension_mean, data$fractal_dimension_worst)
+# As suspected, in most cases the correlation was very strong (>0.85). In the cases of symmetry, smoothness and
+# fractal_dimension the correlation was lower but still positive and considerably strong.
+
+# Finally we compute the correlation between standard errors and worst, obtaining similar results to the ones 
+# comparing mean and se
+cor(data$radius_se, data$radius_worst)
+cor(data$texture_se, data$texture_worst)
+cor(data$perimeter_se, data$perimeter_worst)
+cor(data$area_se, data$area_worst)
+cor(data$smoothness_se, data$smoothness_worst)
+cor(data$compactness_se, data$compactness_worst)
+cor(data$concavity_se, data$concavity_worst)
+cor(data$concave.points_se, data$concave.points_worst)
+cor(data$symmetry_se, data$symmetry_worst)
+cor(data$fractal_dimension_se, data$fractal_dimension_worst)
+
+# We check the correlation of some variables 
+cor(data$radius_mean, data$texture_mean) # Low correlation (0.32)
+cor(data$radius_mean, data$smoothness_mean) # Very low correlation (0.17)
+cor(data$radius_mean, data$concave.points_mean) # Strong correlation (0.82)
+
+# For instance, we know that the correlation of radius & perimeter, radius & area, and perimeter & area are going 
+# to be extremely strong, as there is a linear relationship between them (thus, we couldn't use both for a linear model)
+cor(data$radius_mean, data$perimeter_mean) # Very strong correlation (over 0.99, almost perfect correlation)
+cor(data$radius_mean, data$area_mean) # Very strong correlation (over 0.98, near perfect correlation)
+cor(data$perimeter_mean, data$area_mean) # Very strong correlation (over 0.98, near perfect correlation)
+
+
+
+
+
+
+
+
+
+
+
+
+
+data_new <- data[,1:10]
+numeric_df <- data_new[, sapply(data_new, is.numeric)]
+# Create multiscatter plot
+pairs(numeric_df)
 
 
 
