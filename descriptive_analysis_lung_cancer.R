@@ -2,12 +2,17 @@
 # Authors: Iker Ibarrola, Enetz Quindimil, Carlos Firvida, Iñigo Infante
 
 # Description of the dataset:
+# The lung cancer dataset is synthetically generated. However, the description 
+# indicates that it is designed to closely mirror real-world scenarios, making it 
+# suitable for predictive modeling.
 
 
 # First of all, we load the libraries we are going to use to perform the analysis
 library(dplyr)
 library(pastecs)
-
+library(ggplot2)
+library(lattice)
+library(car)
 
 ###################################
 # START
@@ -42,7 +47,7 @@ data[,16] <- factor(data[,16])
 data[,17] <- factor(data[,17])
 data[,18] <- factor(data[,18])
 
-# We check that know the data is interpreted as a factor rather than a simple char
+# We check that know the data is interpreted as a factor rather than a simple string
 summary(data$Gender)   # There are 1174 female cases and 11924 male
 summary(data[,12])     # There are 11897 with comorbidity diabetes and 11761 who do not have
 summary(data[,13])     # There are 11798 with comorbidity hypertension and 11860 who do not have
@@ -86,31 +91,91 @@ lapply(subset_to_analyse, mean) # Modify the second parameter for whatever funct
 # Correlation
 # In this step we will do a deeper analysis of our variables: 
 
-cor(data$Tumor_Size_mm, data$Smoking_Pack_Years)     # We look if there is a correlation between the size of the tumour and the spoking years of the patient     
-cor(data$Tumor_Size_mm, data$Survival_Months)     # We look if there is a correlation between the tumour size and the survival months
-cor(data$Hemoglobin_Level, data$Tumor_Size_mm)     # We look if there is a correlation between the hemoglovin level and the tumour size
+cor(data$Tumor_Size_mm, data$Smoking_Pack_Years)     # We look if there is a correlation between the size of the tumour and the smoking years of the patient     
+cor(data$Tumor_Size_mm, data$Survival_Months)     # We look if there is a correlation between the tumor size and the survival months
+cor(data$Hemoglobin_Level, data$Tumor_Size_mm)     # We look if there is a correlation between the hemoglobin level and the tumour size
 cor(data$Blood_Pressure_Systolic, data$Survival_Months)     # We look if there is a correlation between the blood pressure systolic and the survival months
 cor(data$Blood_Pressure_Systolic, data$Blood_Pressure_Diastolic)     # We look if there is a correlation between the blood pressure systolic and the blood pressure diastolic
 
-data_means <- data[,30:35]
+###################################
+# Visualization
+# To begin with the visualization, we will create the multiscatter plot for some variables. We just take some 
+# observations because if we take all of them we start to have problems with the computer   
+data_subset <- data[2:2000,20:30] 
 numeric_df_means <- data_means[, sapply(data_means, is.numeric)]
-pairs(numeric_df_means) # for the means
-# In most cases the correlation is very low, beeing the biggest correlation 0.0122 (positive but not very strong)
+pairs(numeric_df) 
+# In most cases the correlation is very low, so we will try other analysis dividing the dat by some binary variable
+
+# We continue by creating a histogram of radius_mean (in case you wanted to visualize
+# another variable just change x = variable)
+ggplot(data, aes(x = Tumor_Size_mm)) + 
+  geom_histogram(binwidth = 0.5, fill = "blue") + 
+  ggtitle("Histogram of Tumor Size") + 
+  xlab("Tumor Size") + 
+  ylab("Count")
+
+# Now a boxplot of Tumor_Size_mm (in case you wanted to visualize another variable just change x = variable)
+# we use the diagnosis in the x axis to see difference between gender
+ggplot(data, aes(x = Gender , y = Tumor_Size_mm, fill = Gender)) + 
+  geom_boxplot() + 
+  ggtitle("Comparison of Tumor Size for Gender")
+
+# We use the dotplot to visualize it in another way
+dotplot(data$Tumor_Size_mm ~ data$Gender)
+
+# Scatter plot of Tumor_Size_mm vs White_Blood_Cell_Count (by gender)
+# In some cases we will just take a subset of observations, as taking all of them
+# makes it more difficult to visualize relationships and overwhelms the visual representations.
+ggplot(data[1:2000, ], aes(x = Tumor_Size_mm, y = White_Blood_Cell_Count, color = Gender)) + 
+  geom_point() + 
+  ggtitle("Scatter Plot of Tumor_Size_mm vs White_Blood_Cell_Count")
+# Another way of visualizing the same as above
+ggplot(data[1:200, ], aes(x=Tumor_Size_mm, y=White_Blood_Cell_Count)) + geom_point(size=1) + facet_grid(.~Gender)
+
+# Scatter plot of Blood_Pressure_Pulse vs Albumin_Level (by Stage)
+ggplot(data[1:200, ], aes(x =Blood_Pressure_Pulse , y = Albumin_Level, color = Stage)) + 
+  geom_point() + 
+  ggtitle("Scatter Plot of Blood_Pressure_Pulse vs Albumin_Level")
+#Another way of visualizing the same as above
+ggplot(data[1:200, ], aes(x=Blood_Pressure_Pulse, y=Albumin_Level)) + geom_point(size=1) + facet_grid(.~Stage)
+
+# We continue by using the contingency table to check some information about categorical variables and proportions
+# Gender
+table(data$Gender)
+prop.table(table(data$Gender))
+
+# Stage
+table(data$Stage)
+prop.table(table(data$Stage))
+
+# Smoking_History
+table(data$Smoking_History)
+prop.table(table(data$Smoking_History))
+
+# Ethnicity
+table(data$Ethnicity)
+prop.table(table(data$Ethnicity))
+
+# Insurance_Type
+table(data$Insurance_Type)
+prop.table(table(data$Insurance_Type))
+
+# We can also do this with two qualitative variables
+table(data$Gender,data$Smoking_History)
+table(data$Stage,data$Smoking_History)
+
+# And now we compute the proportions (with respect to all)
+prop.table(table(data$Gender,data$Smoking_History))
+prop.table(table(data$Stage,data$Smoking_History))
+
+# We use a bar plot to visualize Gender
+ggplot(data)+
+  aes(Gender)+
+  geom_bar()
+
+# We end up by using the qq plot
+qqPlot(data[1:200, ]$Tumor_Size_mm) # as there are a lot of points outside the region, the normal approximation does not work
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-data_new <- data[,1:10]
-numeric_df <- data_new[, sapply(data_new, is.numeric)]
-# Create multiscatter plot
-pairs(numeric_df)
+# 

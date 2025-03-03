@@ -48,7 +48,7 @@ summary(data) #[,] # We can add the [] to select specific variables
 # We decided to do some research and it seems that this is uncommon, yet possible (especially in benign tumors).
 # This finding might help us later in order to find correlations and patterns
 
-#As we know that is unlikely, we check which is the proportion of the observations that have concavity_mean = 0
+# As we know that is unlikely, we check which is the proportion of the observations that have concavity_mean = 0
 sum(data$concavity_mean == 0, na.rm = TRUE) / dim(data)[1] # Around 0.02 (2%) which could make sense
 
 # The variable diagnosis is categorical (binary). So we will create a factor from it:
@@ -165,7 +165,7 @@ pairs(numeric_df_se) # for the standard error
 
 data_worst <- data[,22:31]
 numeric_df_worst <- data_worst[, sapply(data_worst, is.numeric)]
-pairs(numeric_df_worst) # for the standard error
+pairs(numeric_df_worst) # for the worst
 
 # We continue by creating a histogram of radius_mean (in case you wanted to visualize
 # another variable just change x = variable)
@@ -194,7 +194,7 @@ ggplot(data, aes(x = diagnosis, y = concavity_mean, fill = diagnosis)) +
 ggplot(data, aes(x = radius_mean, y = concavity_mean, color = diagnosis)) + 
   geom_point() + 
   ggtitle("Scatter Plot of Radius Mean vs Perimeter Mean")
-#Another way of visualizing the same as above
+# Another way of visualizing the same as above
 ggplot(data, aes(x=radius_mean, y=concavity_mean)) + geom_point(size=1) + facet_grid(.~diagnosis)
 
 # Scatter plot of smoothness_mean vs compactness_mean
