@@ -26,7 +26,7 @@ library(car)
 ###################################
 # START
 # We read the dataset from the csv file
-data <- read.csv("./data.csv")
+data <- read.csv("./breast_cancer_data.csv")
 
 # We get some general information from the dataset, ensuring that everything has been loaded correctly
 head(data) # We visualize the first six rows of the dataset
@@ -217,5 +217,5 @@ ggplot(data)+
   geom_bar()
 
 # We end up by using the qq plot
-qqPlot(data$radius_mean) # as there are a lot of points outside the region,the normal approximation does not work
+qqPlot(data$radius_mean) # as there are a lot of points outside the region, the normal approximation does not work
 
