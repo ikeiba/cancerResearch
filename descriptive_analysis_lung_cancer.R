@@ -102,8 +102,8 @@ cor(data$Blood_Pressure_Systolic, data$Blood_Pressure_Diastolic)     # We look i
 # To begin with the visualization, we will create the multiscatter plot for some variables. We just take some 
 # observations because if we take all of them we start to have problems with the computer   
 data_subset <- data[2:2000,20:30] 
-numeric_df_means <- data_means[, sapply(data_means, is.numeric)]
-pairs(numeric_df) 
+numeric_df_means <- data_subset[, sapply(data_subset, is.numeric)]
+pairs(numeric_df_means) 
 # In most cases the correlation is very low, so we will try other analysis dividing the dat by some binary variable
 
 # We continue by creating a histogram of radius_mean (in case you wanted to visualize
@@ -121,7 +121,7 @@ ggplot(data, aes(x = Gender , y = Tumor_Size_mm, fill = Gender)) +
   ggtitle("Comparison of Tumor Size for Gender")
 
 # We use the dotplot to visualize it in another way
-dotplot(data$Tumor_Size_mm ~ data$Gender)
+dotplot(data$Tumor_Size_mm ~ data$Smoking_Pack_Years)
 
 # Scatter plot of Tumor_Size_mm vs White_Blood_Cell_Count (by gender)
 # In some cases we will just take a subset of observations, as taking all of them
@@ -178,4 +178,14 @@ qqPlot(data[1:200, ]$Tumor_Size_mm) # as there are a lot of points outside the r
 
 
 
-# 
+###################
+# Additional
+subset_smoker <- data %>% filter(Smoking_History == "Never Smoked" & Gender == "Male" & Ethnicity == "Caucasian" & Family_History == "Yes")
+
+data_subset <- subset_smoker[1:50,1:10] 
+numeric_df_means <- data_subset[, sapply(data_subset, is.numeric)]
+pairs(numeric_df_means)
+cor(subset_smoker$Survival_Months, subset_smoker$Smoking_Pack_Years)
+cor(subset_smoker$Age, subset_smoker$Tumor_Size_mm)
+
+
