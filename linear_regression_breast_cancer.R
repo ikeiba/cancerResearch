@@ -29,7 +29,7 @@ str(data) # We visualize the structure of the data (the different variables, the
 data <- data %>% select(-id) # We remove id
 
 data$diagnosis <- factor(data$diagnosis) # Create a factor from the diagnosis variabl:
-levels(data$diagnosis) <- c("benign", "malign") # Instead of using 'b' and 'm',  change to more descriptive labels
+levels(data$diagnosis) <- c("benign", "malign") # Instead of using 'b' & 'm', use more descriptive labels
 summary(data$diagnosis) # We check that previously steps worked properly
 
 ###################################
@@ -74,7 +74,62 @@ p_value # The p-value is 8.465941e-96, confirming that the is a significant diff
     # variables regarding area & perimeter: as they are mathematically dependent on radius (obviously related)
     # x_worst: as they are highly correlated (over 0.7) with x_mean, possibly introducing multicollinearity
     # some x_se: as they are correlated (over 0.5) with x_mean, possibly introducing multicollinearity
-    # The ones with a correlation below 0.5 are: symmetry, texture & smoothness.
+    # The ones with a correlation below 0.5 are: texture, smoothness & symmetry.
+    # concavity_mean & concave.points_mean: we can't select both as they are highly correlated (over 0.9).
+    # Thus, we choose the one more correlated to radius_mean, in this case concave.points_mean.
+
 
 # *x_se, x_worst & x_mean refer to the generalised way of expressing all the variables including 
 # se, worst or mean
+
+# Having in mind those restrictions, we will start the predictor selection using Backward Elimination:
+# First we select alpha = 0.15 as the significance level
+
+# We create the first model, which will contain all the variables that haven't been logically discarded.
+mod10 <- lm(radius_mean~texture_mean+smoothness_mean+compactness_mean
+           +concave.points_mean+symmetry_mean+fractal_dimension_mean
+           +texture_se+smoothness_se+symmetry_se, data = data)
+summary(mod10)
+# The symmetry_se has the highest pvalue higher than the critical alpha
+
+# We delete symmetry_se and create a new model
+mod11 <- lm(radius_mean~texture_mean+smoothness_mean+compactness_mean
+            +concave.points_mean+symmetry_mean+fractal_dimension_mean
+            +texture_se+smoothness_se, data = data)
+summary(mod11) # The R squared is the same even though we have removed a variable
+# Now texture_mean has the highest pvalue above the threshold
+
+# We delete texture_mean and create a new model
+mod12 <- lm(radius_mean~smoothness_mean+compactness_mean
+            +concave.points_mean+symmetry_mean+fractal_dimension_mean
+            +texture_se+smoothness_se, data = data)
+summary(mod12)# The R squared is almost the same after removing another variable
+# Now texture_se has the highest pvalue above the threshold
+
+# We delete texture_se and create a new model
+mod13 <- lm(radius_mean~smoothness_mean+compactness_mean+concave.points_mean
+            +symmetry_mean+fractal_dimension_mean+smoothness_se, data = data)
+summary(mod13)# The R squared is still almost the same after having removed three variables
+
+# There are no variables with a p-value higher than 0.15, so apparently all the variables 
+# should be in the model
+
+##############################################################################################
+# CONSULT WITH THE TEACHER
+# We perform a diagnosis to confirm everything is correct
+plot(mod13)
+
+new_data <- data[-214, ] # The highest cook's distance (leverage)
+new_data <- data[c(-214,-213,-569, -276), ] # The ones that standout in graphs
+# We delete texture_se and create a new model
+mod23 <- lm(radius_mean~smoothness_mean+compactness_mean+concave.points_mean
+            +symmetry_mean+fractal_dimension_mean+smoothness_se, data = new_data)
+summary(mod23)# The R squared is still almost the same after having removed three variables
+
+plot(mod13,1)
+plot(mod23,1)
+##############################################################################################
+
+AIC(mod10, mod11, mod12, mod13)
+BIC(mod10, mod11, mod12, mod13)
+
