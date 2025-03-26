@@ -1,5 +1,5 @@
-# LOGISTIC REGRESSION MODEL OF THE WISCONSIN BREAST CANCER DATASET
-# Authors: [Your Name]
+# LINEAR REGRESSION MODEL OF THE WISCONSIN BREAST CANCER DATASET 
+# Authors: Iker Ibarrola, Enetz Quindimil, Carlos Firvida, Iñigo Infante
 
 # We load the necessary libraries to perform the analysis:
 library(dplyr)       # For data manipulation
