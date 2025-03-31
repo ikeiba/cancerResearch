@@ -1,4 +1,4 @@
-# Following the teacher's recommendations, I tried to create alternative models with different 
+# Following the teacher's recommendations, we tried to create alternative models with different 
 # response (as well as a final one starting with ALL the parameters)
 
 # Authors: Iker Ibarrola, Enetz Quindimil, Carlos Firvida, Iñigo Infante
@@ -48,31 +48,38 @@ mod30 <- lm(area_mean~texture_mean+smoothness_mean+compactness_mean
             +texture_se+smoothness_se+symmetry_se, data = data_train)
 summary(mod30)
 
+# Remove smoothness_se
 mod31 <- lm(area_mean~texture_mean+smoothness_mean+compactness_mean
             +concave.points_mean+symmetry_mean+fractal_dimension_mean
             +texture_se+symmetry_se, data = data_train)
 summary(mod31)
 
+# Remove compactness_mean
 mod32 <- lm(area_mean~texture_mean+smoothness_mean
             +concave.points_mean+symmetry_mean+fractal_dimension_mean
             +texture_se+symmetry_se, data = data_train)
 summary(mod32)
 
+# Remove texture_se
 mod33 <- lm(area_mean~texture_mean+smoothness_mean
             +concave.points_mean+symmetry_mean+fractal_dimension_mean
             +symmetry_se, data = data_train)
 summary(mod33)
 
+# Remove symmetry_se
 mod34 <- lm(area_mean~texture_mean+smoothness_mean
             +concave.points_mean+symmetry_mean+fractal_dimension_mean
             , data = data_train)
 summary(mod34)
 
-
+# Remove texture_mean
 mod35 <- lm(area_mean~smoothness_mean
             +concave.points_mean+symmetry_mean+fractal_dimension_mean
             , data = data_train)
 summary(mod35)
+plot(mod35) # We visualize some plots to make a quick diagnostic, getting similar results
+# to the ones in the original model (mod13), in this case with a bit more normally
+# distributed residuals
 
 
 ###################################
@@ -137,6 +144,9 @@ mod43 <- lm(perimeter_mean~smoothness_mean+compactness_mean
             +concave.points_mean+symmetry_mean+fractal_dimension_mean
             +smoothness_se, data = data_train)
 summary(mod43)
+plot(mod43) # We visualize some plots to make a quick diagnostic, getting extremely 
+# similar results to the ones in the original model (mod13).
+
 
 # All predictors under 0.05 
 
@@ -317,8 +327,8 @@ mod73 <- lm(radius_mean ~ smoothness_mean +
               compactness_se + concave.points_se + 
               fractal_dimension_se, data = data_train)
 summary(mod73)
-
-plot(mod73)
+plot(mod73) # We visualize some plots to make a quick diagnostic, getting again very
+# similar results to the ones in the original model (mod13)
 
 # No more to remove
 

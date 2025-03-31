@@ -298,13 +298,19 @@ plot(mod13, 1) # The plot shows that both characteristics are fulfilled, meaning
 
 # We visualize the second plot (Q-Q plot) to check the distribution of the error terms
 plot(mod13, 2) # Even though it is not perfectly normal, it's not considerably skewed or tailed, so
-# we can consider that it follows a normal distribution.
+# we can consider that it fulfills the normality requirement.
 
 # To ensure the above, we calculate the skewness of the distribution of residuals
 skewness(residuals(mod13)) # The result is 0.3282 which means that is very close to symmetry
 
 # Note: 
-
+# We know that the Shapiro-Wilk test is used to check the normality of the distribution.
+# However we have seen that it is very sensitive to small changes when used with many 
+# observations.
+shapiro.test(residuals(mod13)) # In theory, as the pvalue is lower than 0.05 we should reject
+# the null hypothesis, meaning that the distribution is not normal. But taking into account
+# what we have mentioned (the skewness & qq plot), we check that most residuals follow a 
+# normal distribution.
 
 ###################################
 ### Unusual observations
