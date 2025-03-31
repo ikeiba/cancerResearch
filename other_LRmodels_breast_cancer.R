@@ -1,4 +1,4 @@
-# Following the teacher's recommendations, we tried to create alternative models with different 
+# Following the professor's recommendations, we tried to create alternative models with different 
 # response (as well as a final one starting with ALL the parameters)
 
 # Authors: Iker Ibarrola, Enetz Quindimil, Carlos Firvida, Iñigo Infante
