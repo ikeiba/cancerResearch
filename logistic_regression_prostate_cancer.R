@@ -189,6 +189,7 @@ Plot_RadiusVsDef_LogFit <-
        color = "Legend") +
   theme_minimal()
 
+# - COMPACTENESS - #
 
 # We will check one last time with the compactness which should give us a good result: as we predicted,
 # the compactness is a good predictor
@@ -244,7 +245,7 @@ mod3 <- glm(diagnosis_result ~ texture+compactness+fractal_dimension,
             data=data)
 summary(mod3)
 
-# Finally, we create a new model without the perimeter and check again
+# Finally, we create a new model without the texture and check again
 mod4 <- glm(diagnosis_result ~ compactness+fractal_dimension,
             family=binomial(),
             data=data)
