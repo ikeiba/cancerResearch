@@ -15,7 +15,7 @@ library(fields)  # For image.plot
 # DATASET LOADING & CHECKING #
 ##############################
 
-data <- read.csv("C:/Users/carlos.firvida/OneDrive - Universidad de Deusto/Documentos/Estadistica Avanzada/Teamwork Proyect - Cancer/data/Prostate_Cancer.csv")
+data <- read.csv("./Prostate_Cancer.csv")
 
 # View the structure of the dataset
 str(data)
