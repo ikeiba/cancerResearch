@@ -1,4 +1,5 @@
-## PCA Analysis in the Prostate Cancer Dataset
+# PRINCIPAL COMPONENT ANALYSIS (PCA) OF THE PROSTATE CANCER DATASET
+# Authors: Iker Ibarrola, Enetz Quindimil, Carlos Firvida, Iñigo Infante
 
 # Load necessary libraries
 library(FactoMineR)
@@ -14,10 +15,14 @@ library(fields)  # For image.plot
 # DATASET LOADING & CHECKING #
 ##############################
 
-data <- read.csv("./Prostate_Cancer.csv")
+data <- read.csv("C:/Users/carlos.firvida/OneDrive - Universidad de Deusto/Documentos/Estadistica Avanzada/Teamwork Proyect - Cancer/data/Prostate_Cancer.csv")
 
 # View the structure of the dataset
 str(data)
+
+#* Before removing it we will save the diagnosis in a variable, as it will be useful 
+# at the end of the analysis
+diagnosis <- as.factor(data$diagnosis)
 
 # Remove non-numeric or ID variables
 data <- data %>% select(-id)
@@ -90,9 +95,9 @@ var_result <- plot(pca_result,choix="var")
 # Graph analysis detailed in the main document
 
 
-###################################
-# PCA: INDIVIDUALS & VARIABLES
-###################################
+################################
+# PCA: INDIVIDUALS & VARIABLES #
+################################
 
 
 ## Individual Coordinates
@@ -275,3 +280,117 @@ colSums(pca_result$ind$contrib[ , 1:2])
 
 
 ## Outliers
+
+# In this dataset, the data was not standarized, that why
+# we used the scale() function now we have to slightly modify the approach
+
+# Calculate the mean of each variable in the original data
+center <- colMeans(data_pca)
+
+# Compute the Euclidean distance of each individual from the center. We have to substract 
+# the center of each variable, and as the data is not standarized this is the mean of each
+# variable (with standarized data that will be 0)
+distances <- sqrt(apply(data_pca, MARGIN = 1, FUN = function(x) sum((x - center)^2)))
+
+# We compute the mean and standard deviation of the distances
+mean_dist <- mean(distances)
+sd_dist <- sd(distances)
+
+# We set a threshold for outliers (e.g., 2 standard deviations away from the mean)
+threshold <- mean_dist + 2 * sd_dist
+
+# We find the outliers based on our treshold (obviously a different criterion would
+# detect different outliers)
+outliers <- which(distances > threshold)
+
+# Visualize the outliers 
+outliers
+
+
+###########################################
+# PCA: PRINCIPAL COMPONENTS AND DIAGNOSIS #
+###########################################
+
+# Finally, we can't forget that we are analysing a dataset related to cancer, so we will
+# check if the first two components have somehow separate cancer diagnosis (benign 
+# and malign):
+
+# Plot PCA individuals colored by diagnosis
+fviz_pca_ind(pca_result, 
+             col.ind = diagnosis, 
+             palette = c("blue", "red"),  # Malignant=red, Benign=blue
+             legend.title = "Diagnosis",
+             title = "PCA: Individuals Colored by Diagnosis") +
+  theme_minimal()
+
+# While Component 2 does not significantly separate benign and malignant
+# tumors, Component 1 shows a clear separation: benign cases are associated
+# with negative PC1 scores, while malignant cases are associated with positive
+# PC1 scores. This indicates that the variables most correlated with Component 1
+# are crucial for distinguishing tumor types.
+
+
+# We will confirm this by getting the mean values of the coordinates by diagnosis:
+
+# We create a dataframe with coordinates and diagnosis
+pca_data <- data.frame(
+  PC1 = pca_result$ind$coord[, 1],
+  PC2 = pca_result$ind$coord[, 2],
+  Diagnosis = diagnosis
+)
+
+# We filter the dataset to get separate variables
+benign_coords <- pca_data %>% filter(Diagnosis == "B")
+malign_coords <- pca_data %>% filter(Diagnosis == "M")
+
+# We get the mean values for the first component
+mean(benign_coords$PC1)
+mean(malign_coords$PC1)
+
+# We get the mean values for the second component
+mean(benign_coords$PC2)
+mean(malign_coords$PC2)
+
+# As we can see, the difference is much greater in the first component.
+
+
+# We can even check this difference with a violin plot:
+
+# Violin plot for first component
+ggplot(pca_data, aes(x = diagnosis, y = PC1, fill = diagnosis)) + 
+  geom_violin() + 
+  ggtitle("Distribution of PC1 by Diagnosis")
+
+# Violin plot for second component
+ggplot(pca_data, aes(x = diagnosis, y = PC2, fill = diagnosis)) + 
+  geom_violin() + 
+  ggtitle("Distribution of PC2 by Diagnosis")
+
+# The difference is clear in this case as well
+
+
+# Finally, to confirm this using an statistical test, we will perform an ANOVA test using 
+# the function aov() (not anova()), to see whether there is a significant difference in 
+# the variation within the groups and between the groups.
+
+# Fit the ANOVA model with the first component
+model_aov <- aov(PC1 ~ diagnosis, data = pca_data)
+
+# Check overall significance
+anova_result <- summary(model_aov)
+p_value <- anova_result[[1]]$"Pr(>F)"[1]
+p_value # The p-value is 6.151029e-09, confirming that the is a significant difference 
+# between the PC1 for each diagnosis group.
+
+# Fit the ANOVA model with the second component
+model_aov2 <- aov(PC2 ~ diagnosis, data = pca_data)
+
+# Check overall significance
+anova_result2 <- summary(model_aov2)
+p_value2 <- anova_result2[[1]]$"Pr(>F)"[1]
+p_value2 # The p-value is 0.004426355, confirming that the is a significant difference 
+# between the PC2 for each diagnosis group.
+
+# Although both statistical tests confirm that there is a difference between the
+# diagnosis group in both PC1 and PC2, the p-values show that in the case of PC1 this
+# difference is much bigger.
