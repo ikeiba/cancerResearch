@@ -29,7 +29,7 @@ str(data) # We visualize the structure of the data (the different variables, the
 # As to how this will be done, we will select 3 variables, radius, smoothness, and perimeter, then we will transform
 # these variables into levels ("low", "medium", and "high"), which will be achieved by using what we have
 # determined to be a reasonable method to separate those categories, that method uses the standard
-# deviation of the data for the column and separating at the point where 1 standard deviation is reached on
+# deviation of the data for the column and separates at the point where 1 standard deviation is reached on
 # the low and high ends of the data, giving us "low" for everything below -1 standard deviation, "normal"
 # for everything between -1 and 1 standard deviations, and "high" for everything above 1 standard deviation
 
