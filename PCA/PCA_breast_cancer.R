@@ -311,7 +311,7 @@ variable_to_check <- data$radius_mean # select whatever variable you want
 # Calculate the mean of the variable
 mean_fractal <- mean(variable_to_check)
 
-# Check if the values are above or below the mean
+# Check if the values are over or below the mean
 above_mean <- variable_to_check > mean_fractal
 
 # Create the scatter plot with vectors
@@ -340,17 +340,17 @@ legend("topright", legend = c("Above mean radius", "Below mean radius"),
 # Calculate the mean for the previously selected variable
 mean <- mean(variable_to_check)
 
-# Create a color scale where the higher the value, the more red it gets
+# Create a color scale (the higher the value, the more red)
 col_scale <- colorRampPalette(c("blue", "red"))
 
-# Normalize the variable to the range [0, 1] for coloring
+# Normalize the variable between 0 and 1 for coloring
 norm_values <- (variable_to_check - min(variable_to_check)) / 
   (max(variable_to_check) - min(variable_to_check))
 
-# For some reason, the plot doesn't visualize every point by default, 
+# For some reason, the plot doesn't visualize every point (itn is like zoomed), 
 # so we have to manually change the limits of the plot:
 
-# To adjust axis limits
+# To change the axis limits
 pca_x_min <- min(pca_mean$ind$coord[, 1])
 pca_x_max <- max(pca_mean$ind$coord[, 1])
 pca_y_min <- min(pca_mean$ind$coord[, 2])
@@ -367,9 +367,9 @@ abline(h = 0, v = 0, lty = 2)
 text(pca_mean$var$coord[, 1] + 0.1, pca_mean$var$coord[, 2] + 0.1, 
      labels = row.names(pca_mean$var$coord), cex = 0.6)
 
-# Create the scatter plot of individuals with continuous color scale
+# Create the scatter plot with continuous color scale
 points(pca_mean$ind$coord[, 1], pca_mean$ind$coord[, 2], pch = 16, 
-       col = col_scale(100)[as.numeric(cut(norm_values, breaks = 100))])  # Color according to normalized values
+       col = col_scale(100)[as.numeric(cut(norm_values, breaks = 100))]) 
 abline(h = 0, v = 0, lty = 2, col = "lightgray")
 title(main = "'Means' PCA Analysis: importance of distance")
 
@@ -411,13 +411,13 @@ coord <- pca_mean$ind$coord
 # We extract the contribution for the selected component
 contrib <- pca_mean$ind$contrib[, 1]  # Choose component 1 or 2
 
-# We create color scale (from light yellow to dark red)
+# We create the color scale
 col_scale <- colorRampPalette(c("lightyellow", "red"))
 
 # We scale the contributions (as they are already %, we just have to divide by 100)
 point_colors <- col_scale(100)[as.numeric(cut(contrib / 100, breaks = 100))]
 
-# As previously, we set the plot limits
+# We set the plot limits has we have the same problem has before 
 pca_x_min <- min(coord[, 1]) - 1
 pca_x_max <- max(coord[, 1]) + 1
 pca_y_min <- min(coord[, 2]) - 1
