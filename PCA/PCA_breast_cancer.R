@@ -85,17 +85,20 @@ pca_mean <- PCA(data_mean, scale.unit = TRUE)
 summary(pca_all)
 summary(pca_mean)
 
-# We visualize the scree plots
-scree_all <- fviz_eig(pca_all, main = "All Variables", addlabels = TRUE, ylim = c(0, 100)) # Create plot for all
-scree_mean <- fviz_eig(pca_mean, main = "'Mean' Variables", addlabels = TRUE, ylim = c(0, 100)) #Create plot for mean
-
-scree_all + scree_mean # Visualize them side by side
 
 # We check the eigenvalues as well (we take into account that if the eigenvalue is lower
 # than 1, is not "improving" a original variable, so it will probably not be worth 
 # including it).
 pca_all$eig # From Comp1 to Comp6 the eigenvalues are above 1
 pca_mean$eig # Just in Comp1 and Comp 2 the eigenvalues are above 1 
+
+
+# We visualize the scree plots
+scree_all <- fviz_eig(pca_all, main = "All Variables", addlabels = TRUE, ylim = c(0, 100)) # Create plot for all
+scree_mean <- fviz_eig(pca_mean, main = "'Mean' Variables", addlabels = TRUE, ylim = c(0, 100)) #Create plot for mean
+
+scree_all + scree_mean # Visualize them side by side
+
 
 # In the first case (the one with all the variables), when we look for the 'elbow' in the 
 # plot we can see that it is at dimesions 3. This is beacause percentage of explained 
@@ -107,8 +110,7 @@ pca_mean$eig # Just in Comp1 and Comp 2 the eigenvalues are above 1
 # approximately 63% of the variance of the data.
 # Although this number could seem small, we have to take into account that we are reducing 
 # the amount of variables from 30 to JUST 2, AND STILL KEEPING 63% OF THE TOTAL VARIANCE.
-# *For the sake of practising, comparing and doing something more complex, we will try to 
-# use the first three components as well.
+
 
 # In the second case (the one with just the 'means'), when we look for the 'elbow' in the 
 # plot we can see that it is at dimesions 3. In this case, it has been easier to detect
