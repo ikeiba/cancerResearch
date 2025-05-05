@@ -8,7 +8,7 @@
 
 
 # We load the libraries we will used to create the model:
-#install.packages("FactoMineR")
+install.packages("FactoMineR")
 library(FactoMineR)
 
 
@@ -16,7 +16,7 @@ library(FactoMineR)
 # DATASET LOADING & CHECKING
 ###################################
 
-data <- read.csv("./breast_cancer_data.csv") # We read the dataset from the csv file
+data <- read.csv("sample_data/breast_cancer_data.csv") # We read the dataset from the csv file
 
 head(data) # We visualize the first six rows of the dataset
 
@@ -31,16 +31,23 @@ str(data) # We visualize the structure of the data (the different variables, the
 # so we can use them in Correspondence Analysis.
 
 # Create a function to label categories based on quartiles
-categorize_quartiles <- function(x) {
+categorize_quartiles_radius <- function(x) {
   cut(x,
       breaks = quantile(x, probs = c(0, 0.25, 0.5, 0.75, 1), na.rm = TRUE),
-      labels = c("very low", "low", "high", "very high"),
+      labels = c("very low radius", "low radius", "high radius", "very high radius"),
+      include.lowest = TRUE)
+}
+
+categorize_quartiles_smoothness <- function(x) {
+  cut(x,
+      breaks = quantile(x, probs = c(0, 0.25, 0.5, 0.75, 1), na.rm = TRUE),
+      labels = c("very smooth", "smooth", "Almost not smooth", "Not Smooth"),
       include.lowest = TRUE)
 }
 
 # Apply the categorization to the selected variables
-data$radius_mean_cat <- categorize_quartiles(data$radius_mean)
-data$smoothness_mean_cat <- categorize_quartiles(data$smoothness_mean)
+data$radius_mean_cat <- categorize_quartiles_radius(data$radius_mean)
+data$smoothness_mean_cat <- categorize_quartiles_smoothness(data$smoothness_mean)
 
 
 ###################################
@@ -71,6 +78,25 @@ data$smoothness_mean_cat <- categorize_quartiles(data$smoothness_mean)
 str(data$radius_mean_cat)
 str(data$smoothness_mean_cat)
 
+# The categories ("very low", "low", "high", "very high") for each variable were created
+# using quartiles. Here's what they mean:
+
+# For 'radius_mean_cat':
+# - "very low" = values in the lowest 25% of radius_mean (smallest tumors)
+# - "low"      = values between the 25th and 50th percentile
+# - "high"     = values between the 50th and 75th percentile
+# - "very high"= values in the highest 25% of radius_mean (largest tumors)
+
+# For 'smoothness_mean_cat':
+# - "very low" = values in the lowest 25% of smoothness_mean (least textured tumors)
+# - "low"      = values between the 25th and 50th percentile
+# - "high"     = values between the 50th and 75th percentile
+# - "very high"= values in the highest 25% of smoothness_mean (most textured tumors)
+
+# These categories help us interpret the Correspondence Analysis in terms of real
+# physical tumor characteristics. For example:
+# - A point labeled "very high" in radius means the tumor has a very large mean radius.
+# - A point labeled "low" in smoothness means the tumor surface is relatively smooth.
 
 ###############################################
 # DATASET CONTINGENCY TABLE & EXPECTED TABLE
