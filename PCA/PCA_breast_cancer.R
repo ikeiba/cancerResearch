@@ -36,7 +36,7 @@ str(data) # We visualize the structure of the data (the different variables, the
 
 #* Before removing it we will save the diagnosis in a variable, as it will be useful 
 # at the end of the analysis
-diagnosis <- as.factor(data$diagnosis)  # Replace with your actu
+diagnosis <- as.factor(data$diagnosis)  
 
 data <- data %>% select(-id, -diagnosis) # We remove & diganosis
 
