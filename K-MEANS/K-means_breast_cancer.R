@@ -4,6 +4,7 @@
 # We load the libraries we will used to create the model:
 library(FactoMineR)
 library(dplyr)
+library(tidyr)
 library(ggplot2)
 library(factoextra)
 library(reshape2)
@@ -298,16 +299,29 @@ plot(data_pca, col = colors[km_pca$cluster],
 # PCA plot:
 fviz_pca_var(pca_mean)
 
-# Mean of variables per cluster:
-mean_of_clusters
+# Mean of variables per cluster (to print all columns):
+print(mean_of_clusters, width = Inf)
 
 
-# Each cluster represents (we will mention the most representative clusters):
+# Now, we will try to identify the clusters in the plot (we will mention the most representative 
+# clusters):
     
-    # 
+    # Cluster 4 is probably the yellowish green cluster on the bottom right corner. We know this
+    # because it has the highest radius mean values (which we know that are "represented" in that
+    # direction of PCA) and a relatively low value for fractal dimension.
 
+    # On the contrary, cluster 7 is probably the dark blue one on the top left corner, as it has
+    # the smallest value for the radius, and significantly low values for texture and concavity.
 
+    # Cluster 1 is probably the green cluster on top and in the middle. This is beacause its
+    # fractal dimension is the highest one, meaning that it is exactly in the direction of the 
+    # fractal dimension in the PCA plot.
 
+    # Finally, we could say that cluster 8 is the turquoise blue on the bottom left corner. We
+    # believe this because it has the smallest values in both smoothness and symmetry.
+
+    # The remaining clusters are very closed in the center of the PCA dimension, being difficult
+    # to distinguish based on our data.
 
 
 # Finally, we compute the correlation between the variables and each cluster
@@ -333,5 +347,15 @@ cor_matrix
 # able to see in the violin plots, where cluster 7 was the one having the highest values for fractal
 # dimension and cluster 6 the one having the highest values for compactness.
 
+# Finally, we will  check how the different diagnosis are spread across the clusters
+data$diagnosis <- as.factor(diagnosis)
+
+plot(data_pca, col = colors[km_pca$cluster],
+     ylim = c(-3, 2),
+     main = paste("K-Means Clustering Results with K =", k),
+     xlab = "", ylab = "", pch = 20, cex = 2)
+
+# Add diagnosis labels on top of each point
+text(data_pca[, 1], data_pca[, 2], labels = data$diagnosis, cex = 0.7, pos = 3)
 
 
