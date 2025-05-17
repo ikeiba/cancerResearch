@@ -241,10 +241,20 @@ print(heatmap_plot)
 colors <- rainbow(15)
 
 # We visualize the clusters in the case of PCA (as we can visualize it in 2D)
-plot(data_pca, col = colors[km_pca$cluster],
-     ylim = c(-3, 2),
+x_range <- range(data_pca[, 1])
+y_range <- range(data_pca[, 2])
+
+# We to zoom out
+padding_x <- diff(x_range) * 0.05
+padding_y <- diff(y_range) * 0.05
+
+plot(data_pca, 
+     col = colors[km_pca$cluster],
+     xlim = c(x_range[1] - padding_x, x_range[2] + padding_x),
+     ylim = c(y_range[1] - padding_y, y_range[2] + padding_y),
      main = paste("K-Means Clustering Results with K =", k),
-     xlab = "", ylab = "", pch = 20, cex = 2)
+     xlab = "", ylab = "", 
+     pch = 20, cex = 2)
 
 # As we are plotting the clusters in the case of the PCA model, and we want to intrepet 
 # the results based on the original variables, we will recall the plot showing the 
@@ -291,10 +301,20 @@ ggplot(data_long, aes(x = cluster, y = value, fill = cluster)) +
 # of each variable per cluster and the violin plot. We visualize again everything: 
 
 # Plot of clusters:
-plot(data_pca, col = colors[km_pca$cluster],
-     ylim = c(-3, 2),
+x_range <- range(data_pca[, 1])
+y_range <- range(data_pca[, 2])
+
+# We to zoom out
+padding_x <- diff(x_range) * 0.05
+padding_y <- diff(y_range) * 0.05
+
+plot(data_pca, 
+     col = colors[km_pca$cluster],
+     xlim = c(x_range[1] - padding_x, x_range[2] + padding_x),
+     ylim = c(y_range[1] - padding_y, y_range[2] + padding_y),
      main = paste("K-Means Clustering Results with K =", k),
-     xlab = "", ylab = "", pch = 20, cex = 2)
+     xlab = "", ylab = "", 
+     pch = 20, cex = 2)
 
 # PCA plot:
 fviz_pca_var(pca_mean)
@@ -350,12 +370,30 @@ cor_matrix
 # Finally, we will  check how the different diagnosis are spread across the clusters
 data$diagnosis <- as.factor(diagnosis)
 
-plot(data_pca, col = colors[km_pca$cluster],
-     ylim = c(-3, 2),
+x_range <- range(data_pca[, 1])
+y_range <- range(data_pca[, 2])
+
+# We to zoom out
+padding_x <- diff(x_range) * 0.05
+padding_y <- diff(y_range) * 0.05
+
+plot(data_pca, 
+     col = colors[km_pca$cluster],
+     xlim = c(x_range[1] - padding_x, x_range[2] + padding_x),
+     ylim = c(y_range[1] - padding_y, y_range[2] + padding_y),
      main = paste("K-Means Clustering Results with K =", k),
-     xlab = "", ylab = "", pch = 20, cex = 2)
+     xlab = "", ylab = "", 
+     pch = 20, cex = 2)
+
 
 # Add diagnosis labels on top of each point
 text(data_pca[, 1], data_pca[, 2], labels = data$diagnosis, cex = 0.7, pos = 3)
 
+# Interpretation:
+
+    # There are 5 different clusters for malign tumors, the ones positioned on the right side. This
+    # could mean that, within the malign tumors there are 5 subgroups.
+
+    # Then, there are 6 different clusters for benign tumors, the ones positioned on the left side. 
+    # This could mean that, within the benign tumors there are 5 subgroups.
 
