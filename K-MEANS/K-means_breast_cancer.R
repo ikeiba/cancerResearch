@@ -397,3 +397,4 @@ text(data_pca[, 1], data_pca[, 2], labels = data$diagnosis, cex = 0.7, pos = 3)
     # Then, there are 6 different clusters for benign tumors, the ones positioned on the left side. 
     # This could mean that, within the benign tumors there are 5 subgroups.
 
+    # Finally, there are 4 different clusters where benign and malign tumors are mixed. 

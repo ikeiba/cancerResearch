@@ -25,7 +25,7 @@ library(scico)
 
 data <- read.csv("sample_data/breast_cancer_data.csv")
 
-# The aim is to apply k-means both to the original dataset and to its PCA-transformed version
+# The aim is to apply hierarchical clustering both to the original dataset and to its PCA-transformed version
 
 # Remove non-numeric or identifier variables
 data <- data %>% select(-id)
