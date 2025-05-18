@@ -198,13 +198,12 @@ heatmap_plot <- ggplot(cluster_df, aes(x = PCA, y = Original, fill = Common_poin
 # We visualize the heatmap
 print(heatmap_plot)
 
-# In the heat map we can see how the clusters from the 'mean' model and from the PCA model
-# are related. To be honest, this is not what we were expecting. We expected to see, more
-# or less clearly, how the different clusters of each model where associated (something
-# like "cluster x from the mean model represents clearly cluster y from the PCA model"),
-# but we have got a matrix in which most points of a cluster are distributed across 
-# several clusters of the other model. The most clear patterns/relations we have been able
-# to identify are the following:
+# In the heatmap we can see how the clusters from the 'mean' model and from the PCA model
+# are related. This is what we were expecting: to see, more or less clearly, how the different 
+# clusters of each model were associated. Although in some cases most points of a cluster 
+# are distributed across several clusters of the other model, in most clusters the relationship
+# between a cluster of the mean model and another one (or two) of the PCA model are clear.
+# The most clear patterns/relations we have been able to identify are the following:
 
     # Cluster 15 of the mean model is most similar to cluster 8.
     # Cluster 12 of the mean model is  mostly a combination of 1 and 12.
@@ -330,10 +329,10 @@ print(mean_of_clusters, width = Inf)
     # because it has the highest radius mean values (which we know that are "represented" in that
     # direction of PCA) and a relatively low value for fractal dimension.
 
-    # On the contrary, cluster 7 is probably the dark blue one on the top left corner, as it has
+    # On the contrary, cluster 7 is probably the dark blue one on the top middle left part, as it has
     # the smallest value for the radius, and significantly low values for texture and concavity.
 
-    # Cluster 1 is probably the green cluster on top and in the middle. This is beacause its
+    # Cluster 1 is probably the red cluster on top and in the middle. This is beacause its
     # fractal dimension is the highest one, meaning that it is exactly in the direction of the 
     # fractal dimension in the PCA plot.
 
