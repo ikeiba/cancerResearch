@@ -19,9 +19,13 @@ library(scico)
 # DATASET LOADING & CHECKING #
 ##############################
 
-data <- read.csv("C:/Users/carlos.firvida/OneDrive - Universidad de Deusto/Documentos/Estadistica Avanzada/Teamwork Proyect - Cancer/data/Prostate_Cancer.csv")
+data <- read.csv("./Prostate_Cancer.csv")
 
 # We will approach to apply k-means to the original dataset and after applying PCA
+
+#* Before removing it we will save the diagnosis in a variable, as it will be useful 
+# at the end of the analysis
+diagnosis <- as.factor(data$diagnosis)
 
 # Remove non-numeric or ID variables
 data <- data %>% select(-id)
@@ -230,3 +234,33 @@ cor_matrix
 
 # In this case there are some high correlations between some of the clusters and variables, 
 # for instance in the case of cluster 3 and area and cluster 1 and symetry.
+
+# Finally, we will  check how the different diagnosis are spread across the clusters
+data$diagnosis <- as.factor(diagnosis)
+
+x_range <- range(pca_data[, 1])
+y_range <- range(pca_data[, 2])
+
+# We to zoom out
+padding_x <- diff(x_range) * 0.05
+padding_y <- diff(y_range) * 0.05
+
+plot(pca_data, 
+     col = colors[km.pca$cluster],
+     xlim = c(x_range[1] - padding_x, x_range[2] + padding_x),
+     ylim = c(y_range[1] - padding_y, y_range[2] + padding_y),
+     main = paste("K-Means Clustering Results with K =", k),
+     xlab = "", ylab = "", 
+     pch = 20, cex = 2)
+
+
+# Add diagnosis labels on top of each point
+text(pca_data[, 1], pca_data[, 2], labels = data$diagnosis, cex = 0.7, pos = 3)
+
+# Interpretation:
+
+# There are 2 different clusters for malign tumors, the ones positioned on the right side. This
+# could mean that, within the malign tumors there are 2 subgroups.
+
+# Then, there is only one cluster for benign tumors, the ones positioned on the left side. 
+# This could mean that, there is only one main group of bening tomours.
